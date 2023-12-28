@@ -1,0 +1,21 @@
+[package]
+name = "double_dot_state"
+version = "0.1.0"
+edition = "2021"
+authors = ["aarongraybill3@gmail.com"]
+description = "State management crate built for the Bevy game engine"
+license = "MIT OR Apache-2.0"
+keywords = ["gamedev", "state", "bevy"]
+homepage = "https://github.com/Double-Dot-Interactive/double_dot_state"
+repository = "https://github.com/Double-Dot-Interactive/double_dot_state.git"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bevy = "0.10.1"
+double_dot_macro = "0.1.0"
+
+
+[lib]
+path = "src/lib.rs"
