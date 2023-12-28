@@ -2,7 +2,13 @@
 It is primarily used for state-management in Bevy
 
 ## What Double_Dot_State accomplishes
-State management is easy thanks to the `DoubleState` macro.
+Properly managing State can be a cumbersome task. Take this state diagram as an example
+
+![alt text](https://github.com/Double-Dot-Interactive/double_dot_state/blob/main/doc/example%20diagram.png?raw=true)
+
+In this example there is a mix of linear and arbitrary state transitions.
+
+Managing this state is made easier thanks to the `DoubleState` macro.
 
 `DoubleState` will implement `States` from Bevy automatically.
 
