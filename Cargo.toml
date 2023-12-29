@@ -1,6 +1,6 @@
 [package]
 name = "double_dot_state"
-version = "0.1.2"
+version = "0.1.21"
 edition = "2021"
 authors = ["aarongraybill3@gmail.com"]
 description = "State management crate built for the Bevy game engine"
@@ -14,7 +14,7 @@ readme = "README.md"
 
 [dependencies]
 bevy = "0.10.1"
-double_dot_macro = "0.1.2"
+double_dot_macro = "0.1.21"
 # double_dot_macro = {path = "../double_dot_macro"}
 
 

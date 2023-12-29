@@ -1,17 +1,38 @@
 pub use double_dot_macro::*;
 pub use bevy::prelude::*;
+use prelude::{DoubleStateEvent, DoubleStateTransition};
 
-#[derive(Debug, Clone)]
-pub enum DoubleStateTransition<S>
-where
-    S: DoubleStates
-{
-    Linear,
-    Arbitrary(S)
+pub mod prelude {
+    pub use double_dot_macro::DoubleStates;
+    pub use bevy::prelude::*;
+
+    use crate::watch_state_event;
+    
+    #[derive(Debug, Clone)]
+    pub enum DoubleStateTransition<S>
+    where
+        S: DoubleStates
+    {
+        Linear,
+        Arbitrary(S)
+    }
+    
+    #[derive(Debug, Clone)]
+    pub struct DoubleStateEvent<S: DoubleStates>(pub DoubleStateTransition<S>);
+    pub trait AppExt {
+        fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self;
+    }
+    
+    impl AppExt for App {
+        fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self {
+            self
+                .add_state::<S>()
+                .add_event::<DoubleStateEvent<S>>()
+                .add_system(watch_state_event::<S>)
+        }
+    }
 }
 
-#[derive(Debug, Clone)]
-pub struct DoubleStateEvent<S: DoubleStates>(pub DoubleStateTransition<S>);
 
 
 fn watch_state_event<S: DoubleStates + States>(
@@ -30,18 +51,5 @@ fn watch_state_event<S: DoubleStates + States>(
                 next_state.set(state.0.arbitrary_transition(&arb_state))
             },
         }
-    }
-}
-
-pub trait AppExt {
-    fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self;
-}
-
-impl AppExt for App {
-    fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self {
-        self
-            .add_state::<S>()
-            .add_event::<DoubleStateEvent<S>>()
-            .add_system(watch_state_event::<S>)
     }
 }
