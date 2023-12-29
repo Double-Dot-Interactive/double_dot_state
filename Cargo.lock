@@ -1335,9 +1335,9 @@ checksum = "bd0c93bb4b0c6d9b77f4435b0ae98c24d17f1c45b2ff844c6151a07256ca923b"
 
 [[package]]
 name = "double_dot_macro"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b55abcd3d5d7f293c3332b12f6b7f785916922f024e8a7a73ed0c64beb673599"
+checksum = "800787d5f1e701564d9c6df72e0a22a8732b86530b512722567993e3cb2fb3cf"
 dependencies = [
  "bevy",
  "double_dot_macro_derive",
@@ -1348,9 +1348,9 @@ dependencies = [
 
 [[package]]
 name = "double_dot_macro_derive"
-version = "0.1.0"
+version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8aa6c028e6a0115b8aa2310fe7c5194a59fcb3bf8fb1e770914b3de44b2f089"
+checksum = "8b601cf101842abefc13f0b9a108a32665978dd280c631ddd8b1d7c79f5bfd4a"
 dependencies = [
  "double_dot_macro_types",
  "quote",
@@ -1370,7 +1370,7 @@ dependencies = [
 
 [[package]]
 name = "double_dot_state"
-version = "0.1.0"
+version = "0.1.2"
 dependencies = [
  "bevy",
  "double_dot_macro",

@@ -1,7 +1,9 @@
 # Double_Dot_State is a usefull crate for maintaining state management in rust
-It is primarily used for state-management in Bevy
+
+It is primarily used for state-management in Bevy but will soon include a feature to make it work for any rust project, ie. won't implement any Bevy features and just check if state transitions are valid.
 
 ## What Double_Dot_State accomplishes
+
 Properly managing State can be a cumbersome task. Take this state diagram as an example
 
 ![alt text](https://github.com/Double-Dot-Interactive/double_dot_state/blob/main/doc/example%20diagram.png?raw=true)
@@ -32,55 +34,73 @@ pub enum AppState {
 } 
 ```
 
-The `DoubleState` derive macro will take each attribute placed on each state and check if they are valid enum fields. So if OptionMenu is defined as a linear transition from MainMenu you'd get a compiler error telling you `OptionMenu doesn't exist as a state in AppState`. This gives the user some
-peace of mind defining their states.
+***note*** you'll get a compiler error if no default state is defined via the [`Default`](https://doc.rust-lang.org/std/default/trait.Default.html) derive macro.
 
-Only 1 linear transition is allowed per state along with an unlimited amount of arbitrary transitions.
+The `DoubleState` derive macro will take each attribute placed on each state and check if they are valid enum fields. So if OptionMenu (which doesn't exist) is defined as a linear transition from MainMenu you'd get a compiler error telling you `"OptionMenu" doesn't exist as a state in "AppState"`. Knowing this cuts down on runtime errors.
+
+Only 1 linear transition is allowed per state, however you can define an unlimited amount of arbitrary transitions.
 
 ## Usage
-After defining your state enum, add it to Bevy via the [`add_state()`](https://docs.rs/bevy/0.12.1/bevy/app/struct.App.html#method.add_state) method from [`App`](https://docs.rs/bevy/0.12.1/bevy/app/struct.App.html)
+
+After defining your state enum, add it to Bevy via the [`add_double_state()`](https://docs.rs/double_dot_state/latest/double_dot_state/trait.AppExt.html#tymethod.add_double_state) method from [`AppExt`](https://docs.rs/double_dot_state/latest/double_dot_state/trait.AppExt.html) which is added onto [`App`](https://docs.rs/bevy/latest/bevy/app/struct.App.html) from double_dot_state
 
 ```rust
 use bevy::prelude::*;
 fn main() {
     App::new()
         // your implementation here
-        .add_state::<AppState>()
+        .add_double_state::<AppState>()
     ;
 }
 ```
+
 ### Linear Transitions
 
-After your AppState is in Bevy's system you could for example trantition to the MainMenu state after finished loading assets.
+After your AppState is in the system you could for example trantition to the MainMenu state after finished loading assets.
+
 ```rust
 fn load_assets(
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
-    mut state: ResMut<NextState<AppState>>
+    mut next_state: EventWriter<DoubleStateEvent<AppState>>
 ) {
     // load your assets
 
     // transition into the next linear state defined in the enum type
-    state.set(state.0.unwrap().linear_transition());
+    next_state.send(DoubleStateEvent(DoubleStateTransition::Linear));
 }
 ```
 
-[`linear_transition()`]() will return the linear transition defined as an attribute on the current state. It will **panic** if no linear transitions exist for the current state.
+[`DoubleStateTransition::Linear`](https://docs.rs/double_dot_state/latest/double_dot_state/enum.DoubleStateTransition.html) tells double_dot_state the you want to attempt a linear state transition from the current state.
+
+***note*** This will panic with the message `No linear transition found for "AppState::Loading"` if no linear transition is defined for Loading which is the current AppState in this example. Panicing here is important, as a bug like this will render your program useless anyways. Knowing this can help with debugging your code.
 
 ### Arbitrary Transitions
 
 If you have a state that can transition to multiple arbitrary ones you can transition to whichever state you want.
 
 So if you want to transition to MainMenu from Paused you can do so like this
+
 ```rust
 fn pause_menu(
-    mut state: ResMut<NextState<AppState>>
+    mut state: EventWriter<DoubleStateEvent<AppState>>
 ) {
     // your pause menu implementation here
     
     // if the user clicks Main Menu transition to MainMenu state
-    state.set(state.0.unwrap().arbitrary_transition(AppState::MainMenu));
+    next_state.send(DoubleStateEvent(DoubleStateTransition::Arbitrary(AppState::MainMenu)));
 }
 ```
 
-[`arbitray_transition()`]() will return the state specified if it is deemed as a valid transition via the attributes defined on the current state.
+[`DoubleStateTransition::Arbitrary`](https://docs.rs/double_dot_state/latest/double_dot_state/enum.DoubleStateTransition.html) tells double_dot_state that you want to attempt an arbitrary transition from the current AppState to the new AppState.
 
+***note*** This will panic with the message `Arbitrary transition "MainMenu" not found for "AppState::Paused"` if the specified new transition doesn't exist for Paused which is the current AppState in this example. Panicing here is important, as a bug like this will render your program useless anyways. Knowing this can help with debugging your code.
+
+License
+Dual-licensed under either of
+
+Apache License, Version 2.0, (LICENSE-APACHE or <https://www.apache.org/licenses/LICENSE-2.0>)
+MIT license (LICENSE-MIT or <https://opensource.org/licenses/MIT>)
+at your option.
+
+Contribution
+Unless you explicitly state otherwise, any contribution intentionally submitted via [GitHub Repo](https://github.com/Double-Dot-Interactive/double_dot_state) for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
