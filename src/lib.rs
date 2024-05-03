@@ -16,8 +16,24 @@ pub mod prelude {
         Linear,
         Arbitrary(S)
     }
+
+    pub enum DoubleStateSchedule<S> 
+    where
+        S: DoubleStates + States
+    {
+        OnEnter(OnEnter<S>),
+        OnExit(OnExit<S>),
+    }
+
+    pub struct DoubleStateSystemConfig<S> 
+    where
+        S: DoubleStates + States
+    {
+        pub schedule: DoubleStateSchedule<S>,
+        pub transition: DoubleStateTransition<S>
+    }
     
-    #[derive(Debug, Clone)]
+    #[derive(Debug, Clone, Event)]
     pub struct DoubleStateEvent<S: DoubleStates>(pub DoubleStateTransition<S>);
     pub trait AppExt {
         fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self;
@@ -28,11 +44,10 @@ pub mod prelude {
             self
                 .add_state::<S>()
                 .add_event::<DoubleStateEvent<S>>()
-                .add_system(watch_state_event::<S>)
+                .add_systems(Update,watch_state_event::<S>)
         }
     }
 }
-
 
 
 fn watch_state_event<S: DoubleStates + States>(
@@ -40,15 +55,15 @@ fn watch_state_event<S: DoubleStates + States>(
     mut next_state: ResMut<NextState<S>>,
     state: Res<State<S>>
 ) {
-    for event in state_event.iter() {
+    for event in state_event.read() {
         match &event.0 {
             DoubleStateTransition::Linear => {
                 // info!("{:?}", state.0.linear_transition());
-                next_state.set(state.0.linear_transition())
+                next_state.set(state.linear_transition())
             },
             DoubleStateTransition::Arbitrary(arb_state) => {
                 // info!("{:?}", state.0.arbitrary_transition(&arb_state));
-                next_state.set(state.0.arbitrary_transition(&arb_state))
+                next_state.set(state.arbitrary_transition(&arb_state))
             },
         }
     }
