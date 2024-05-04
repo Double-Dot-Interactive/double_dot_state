@@ -68,3 +68,18 @@ fn watch_state_event<S: DoubleStates + States>(
         }
     }
 }
+
+/// Enum for Testing purposes
+#[derive(Clone, Eq, PartialEq, Debug, Hash, DoubleStates, Default)]
+enum TestState {
+    #[linear(MainMenu)]
+    Loading,
+    #[arbitrary(Playing, Exit)]
+    MainMenu,
+    #[default]
+    #[linear(Paused)]
+    Playing,
+    #[arbitrary(MainMenu, Exit)]
+    Paused,
+    Exit
+}
