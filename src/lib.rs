@@ -1,8 +1,10 @@
+use bevy::state::state::FreelyMutableState;
 pub use double_dot_macro::*;
 pub use bevy::prelude::*;
 use prelude::{DoubleStateEvent, DoubleStateTransition};
 
 pub mod prelude {
+    use bevy::state::state::FreelyMutableState;
     pub use double_dot_macro::DoubleStates;
     pub use bevy::prelude::*;
 
@@ -36,11 +38,11 @@ pub mod prelude {
     #[derive(Debug, Clone, Event)]
     pub struct DoubleStateEvent<S: DoubleStates>(pub DoubleStateTransition<S>);
     pub trait AppExt {
-        fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self;
+        fn add_double_state<S: DoubleStates + States + FreelyMutableState>(&mut self) -> &mut Self;
     }
     
     impl AppExt for App {
-        fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self {
+        fn add_double_state<S: DoubleStates + States + FreelyMutableState>(&mut self) -> &mut Self {
             self
                 .init_state::<S>()
                 .add_event::<DoubleStateEvent<S>>()
@@ -50,7 +52,7 @@ pub mod prelude {
 }
 
 
-fn watch_state_event<S: DoubleStates + States>(
+fn watch_state_event<S: DoubleStates + States + FreelyMutableState>(
     mut state_event: EventReader<DoubleStateEvent<S>>,
     mut next_state: ResMut<NextState<S>>,
     state: Res<State<S>>
