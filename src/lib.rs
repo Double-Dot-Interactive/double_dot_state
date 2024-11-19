@@ -42,7 +42,7 @@ pub mod prelude {
     impl AppExt for App {
         fn add_double_state<S: DoubleStates + States>(&mut self) -> &mut Self {
             self
-                .add_state::<S>()
+                .init_state::<S>()
                 .add_event::<DoubleStateEvent<S>>()
                 .add_systems(Update,watch_state_event::<S>)
         }

@@ -1,6 +1,6 @@
 [package]
 name = "double_dot_state"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 authors = ["aarongraybill3@gmail.com"]
 description = "State management crate built for the Bevy game engine"
@@ -13,8 +13,8 @@ readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.12.1"
-double_dot_macro = "0.2.1"
+bevy = "0.13.1"
+double_dot_macro = "0.3.0"
 # double_dot_macro = {path = "../double_dot_macro"}
 
 
